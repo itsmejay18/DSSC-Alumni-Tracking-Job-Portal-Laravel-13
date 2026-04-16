@@ -25,7 +25,7 @@ class DashboardController extends Controller
 
     protected function payload(): array
     {
-        return Cache::remember('admin.dashboard.payload', now()->addMinutes(5), function (): array {
+        return Cache::remember('admin.dashboard.payload.v3', now()->addMinutes(5), function (): array {
             return [
                 'stats' => [
                     'alumni' => User::query()->alumni()->count(),
@@ -69,7 +69,18 @@ class DashboardController extends Controller
                     ->all(),
                 'recentJobs' => Job::query()->with(['employer', 'jobCategory'])->latest()->take(5)->get(),
                 'recentApplications' => JobApplication::query()->with(['job', 'alumni.alumniProfile'])->latest()->take(5)->get(),
-                'pendingEmployers' => Employer::query()->with('user')->where('is_verified', false)->latest()->take(5)->get(),
+                'pendingEmployers' => Employer::query()
+                    ->with('user')
+                    ->where('is_verified', false)
+                    ->latest()
+                    ->take(5)
+                    ->get()
+                    ->map(fn (Employer $employer) => [
+                        'id' => $employer->id,
+                        'company_name' => $employer->company_name,
+                        'email' => $employer->user?->email,
+                    ])
+                    ->all(),
             ];
         });
     }

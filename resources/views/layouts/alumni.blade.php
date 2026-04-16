@@ -34,11 +34,35 @@
                 </div>
                 <div class="kit-dashboard-topbar-right">
                     <button class="kit-dashboard-circle-button" type="button" data-theme-toggle aria-label="Toggle theme"><i class="ph ph-sun"></i></button>
-                    <div class="kit-dashboard-user">
-                        <img src="{{ asset('uikit/assets/images/dssc-logo-circle.png') }}" alt="{{ $user->name }}" class="kit-dashboard-user-avatar">
-                        <div class="kit-dashboard-user-copy">
-                            <strong>{{ $user->name }}</strong>
-                            <span>{{ $user->alumniProfile?->student_id }}</span>
+                    <div class="portal-user-menu" data-user-menu>
+                        <button class="kit-dashboard-user portal-user-trigger" type="button" data-user-menu-trigger aria-expanded="false" aria-haspopup="true">
+                            <img src="{{ asset('uikit/assets/images/dssc-logo-circle.png') }}" alt="{{ $user->name }}" class="kit-dashboard-user-avatar">
+                            <div class="kit-dashboard-user-copy">
+                                <strong>{{ $user->name }}</strong>
+                                <span>{{ $user->alumniProfile?->student_id }}</span>
+                            </div>
+                            <i class="ph ph-caret-down"></i>
+                        </button>
+                        <div class="portal-user-dropdown" data-user-menu-panel hidden>
+                            <div class="portal-user-dropdown-head">
+                                <strong>{{ $user->name }}</strong>
+                                <span>{{ $user->email }}</span>
+                            </div>
+                            <a class="portal-user-dropdown-link" href="{{ route('alumni.profile.show') }}">
+                                <i class="ph ph-user-circle"></i>
+                                <span>View Profile</span>
+                            </a>
+                            <a class="portal-user-dropdown-link" href="{{ route('alumni.profile.edit') }}">
+                                <i class="ph ph-pencil-simple"></i>
+                                <span>Edit Profile</span>
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="portal-user-dropdown-link danger" type="submit">
+                                    <i class="ph ph-sign-out"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

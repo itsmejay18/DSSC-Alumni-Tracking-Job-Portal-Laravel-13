@@ -103,6 +103,121 @@
     height: 100%;
 }
 
+.kit-dashboard-page {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.kit-dashboard-page .kit-admin-shell {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.kit-dashboard-page .kit-dashboard-sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.kit-dashboard-page .kit-dashboard-main {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.kit-dashboard-page .kit-dashboard-frame {
+    height: calc(100vh - 48px);
+    min-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.kit-dashboard-page .kit-dashboard-topbar {
+    flex: 0 0 auto;
+}
+
+.kit-dashboard-page .kit-dashboard-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.portal-user-menu {
+    position: relative;
+}
+
+.portal-user-trigger {
+    border: 0;
+    background: transparent;
+    padding: 6px 8px;
+    border-radius: 18px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.portal-user-trigger:hover,
+.portal-user-trigger[aria-expanded="true"] {
+    background: rgba(31, 111, 191, 0.08);
+}
+
+.portal-user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: min(260px, 85vw);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    padding: 10px;
+    z-index: 70;
+}
+
+.portal-user-dropdown-head {
+    display: grid;
+    gap: 4px;
+    padding: 10px 12px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+}
+
+.portal-user-dropdown-head strong {
+    color: var(--text-primary);
+    font-size: 0.96rem;
+}
+
+.portal-user-dropdown-head span {
+    color: var(--text-muted);
+    font-size: 0.84rem;
+}
+
+.portal-user-dropdown-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    text-align: left;
+    text-decoration: none;
+}
+
+.portal-user-dropdown-link:hover {
+    background: var(--bg-surface-muted);
+}
+
+.portal-user-dropdown-link.danger {
+    color: var(--danger);
+}
+
+.portal-user-dropdown-link.danger:hover {
+    background: var(--danger-soft);
+}
+
 .portal-richtext {
     color: var(--text-primary);
     line-height: 1.7;
@@ -170,5 +285,18 @@ trix-toolbar .trix-dialog {
 
     .portal-pagination {
         flex-direction: column;
+    }
+
+    .kit-dashboard-page .kit-dashboard-main {
+        height: 100vh;
+    }
+
+    .kit-dashboard-page .kit-dashboard-frame {
+        height: calc(100vh - 24px);
+        min-height: calc(100vh - 24px);
+    }
+
+    .portal-user-dropdown {
+        right: 0;
     }
 }

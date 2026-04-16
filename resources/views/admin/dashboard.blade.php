@@ -55,10 +55,10 @@
             @forelse ($pendingEmployers as $employer)
                 <div class="kit-list-item">
                     <div class="kit-list-meta">
-                        <strong>{{ $employer->company_name }}</strong>
-                        <span>{{ $employer->user?->email }}</span>
+                        <strong>{{ $employer['company_name'] ?? 'Employer' }}</strong>
+                        <span>{{ $employer['email'] ?? 'No email available' }}</span>
                     </div>
-                    <a class="kit-button secondary" href="{{ route('admin.employers.show', $employer) }}">Review</a>
+                    <a class="kit-button secondary" href="{{ route('admin.employers.show', $employer['id']) }}">Review</a>
                 </div>
             @empty
                 <div class="kit-empty">
