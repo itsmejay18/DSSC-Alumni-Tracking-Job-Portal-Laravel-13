@@ -28,11 +28,21 @@ class CheckUserStatus
         if (
             $user->role === 'employer'
             && ! $user->is_approved
-            && ! $request->routeIs('employer.profile.verification', 'logout')
+            && ! $request->routeIs('employer.profile.*', 'logout')
         ) {
             return redirect()
                 ->route('employer.profile.verification')
                 ->with('warning', 'Your employer account is pending admin approval.');
+        }
+
+        if (
+            $user->role === 'employer'
+            && ! $user->employerProfile
+            && ! $request->routeIs('employer.profile.*', 'logout')
+        ) {
+            return redirect()
+                ->route('employer.profile.edit')
+                ->with('warning', 'Complete your company profile before accessing employer tools.');
         }
 
         return $next($request);

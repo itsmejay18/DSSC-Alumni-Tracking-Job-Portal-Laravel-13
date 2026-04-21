@@ -12,7 +12,15 @@ class JobController extends Controller
 {
     public function index()
     {
-        $jobs = auth()->user()->employerProfile
+        $employer = auth()->user()->employerProfile;
+
+        if (! $employer) {
+            return redirect()
+                ->route('employer.profile.edit')
+                ->with('warning', 'Complete your company profile before managing jobs.');
+        }
+
+        $jobs = $employer
             ->jobs()
             ->with('jobCategory')
             ->latest()
@@ -23,6 +31,12 @@ class JobController extends Controller
 
     public function create()
     {
+        if (! auth()->user()->employerProfile) {
+            return redirect()
+                ->route('employer.profile.edit')
+                ->with('warning', 'Complete your company profile before posting jobs.');
+        }
+
         return view('employer.jobs.create', [
             'categories' => \App\Models\JobCategory::query()->where('is_active', true)->orderBy('category_name')->get(),
         ]);
@@ -30,7 +44,15 @@ class JobController extends Controller
 
     public function store(StoreJobRequest $request): RedirectResponse
     {
-        $job = auth()->user()->employerProfile->jobs()->create([
+        $employer = $request->user()->employerProfile;
+
+        if (! $employer) {
+            return redirect()
+                ->route('employer.profile.edit')
+                ->with('warning', 'Complete your company profile before posting jobs.');
+        }
+
+        $job = $employer->jobs()->create([
             ...$request->validated(),
             'description' => $this->sanitizeRichText($request->string('description')->toString()),
             'skills_required' => $this->normalizeSkills($request->input('skills_required', [])),

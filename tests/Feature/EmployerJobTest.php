@@ -39,4 +39,27 @@ class EmployerJobTest extends TestCase
             'status' => 'pending',
         ]);
     }
+
+    public function test_employer_without_profile_is_redirected_to_profile_edit_from_jobs(): void
+    {
+        $user = User::factory()->employer()->create();
+
+        $response = $this->actingAs($user)->get(route('employer.jobs.index'));
+
+        $response->assertRedirect(route('employer.profile.edit'));
+        $response->assertSessionHas('warning', 'Complete your company profile before accessing employer tools.');
+    }
+
+    public function test_profile_edit_creates_missing_employer_profile(): void
+    {
+        Industry::query()->create(['industry_name' => 'IT', 'industry_code' => 'IT', 'is_active' => true]);
+        $user = User::factory()->employer()->create();
+
+        $response = $this->actingAs($user)->get(route('employer.profile.edit'));
+
+        $response->assertOk();
+        $this->assertDatabaseHas('employers', [
+            'user_id' => $user->id,
+        ]);
+    }
 }

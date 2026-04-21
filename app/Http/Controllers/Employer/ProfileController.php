@@ -13,8 +13,11 @@ class ProfileController extends Controller
 {
     public function edit()
     {
+        $user = auth()->user();
+        $user->setRelation('employerProfile', $user->ensureEmployerProfile()->load('industry'));
+
         return view('employer.profile.edit', [
-            'employer' => auth()->user()->load('employerProfile.industry'),
+            'employer' => $user,
             'industries' => \App\Models\Industry::query()->where('is_active', true)->orderBy('industry_name')->get(),
         ]);
     }
@@ -22,7 +25,7 @@ class ProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
-        $employer = $user->employerProfile;
+        $employer = $user->ensureEmployerProfile();
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -68,8 +71,11 @@ class ProfileController extends Controller
 
     public function verification()
     {
+        $user = auth()->user();
+        $user->setRelation('employerProfile', $user->ensureEmployerProfile()->load('industry'));
+
         return view('employer.profile.verification', [
-            'employer' => auth()->user()->load('employerProfile.industry'),
+            'employer' => $user,
         ]);
     }
 

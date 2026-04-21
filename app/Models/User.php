@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -123,6 +124,28 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'employer';
     }
 
+    public function ensureEmployerProfile(): Employer
+    {
+        $profile = Employer::withTrashed()->firstOrNew([
+            'user_id' => $this->id,
+        ]);
+
+        if (! $profile->exists) {
+            $profile->fill([
+                'company_name' => $this->nextAvailableEmployerCompanyName(),
+                'country' => 'Philippines',
+                'is_verified' => false,
+            ]);
+            $profile->save();
+        } elseif ($profile->trashed()) {
+            $profile->restore();
+        }
+
+        $this->setRelation('employerProfile', $profile);
+
+        return $profile;
+    }
+
     public function dashboardRoute(): string
     {
         return match ($this->role) {
@@ -130,5 +153,25 @@ class User extends Authenticatable implements MustVerifyEmail
             'employer' => route('employer.dashboard'),
             default => route('alumni.dashboard'),
         };
+    }
+
+    protected function nextAvailableEmployerCompanyName(): string
+    {
+        $base = Str::of($this->name)
+            ->trim()
+            ->limit(80, '')
+            ->whenEmpty(fn () => Str::of("Employer Account {$this->id}"))
+            ->append(" Company {$this->id}")
+            ->toString();
+
+        $candidate = $base;
+        $suffix = 1;
+
+        while (Employer::withTrashed()->where('company_name', $candidate)->exists()) {
+            $candidate = "{$base} {$suffix}";
+            $suffix++;
+        }
+
+        return $candidate;
     }
 }
