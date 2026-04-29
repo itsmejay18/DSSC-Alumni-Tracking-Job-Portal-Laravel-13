@@ -129,6 +129,7 @@ class Job extends Model
     public function toSearchableArray(): array
     {
         return [
+            'id' => $this->getKey(),
             'title' => $this->title,
             'description' => $this->description,
             'requirements' => $this->requirements,
