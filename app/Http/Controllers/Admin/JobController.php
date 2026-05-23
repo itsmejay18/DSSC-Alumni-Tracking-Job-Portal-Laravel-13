@@ -26,7 +26,7 @@ class JobController extends Controller
     public function show(Job $job)
     {
         return view('admin.jobs.show', [
-            'job' => $job->load(['employer.user', 'jobCategory', 'applications.alumni.alumniProfile']),
+            'job' => $job->load(['employer.user', 'jobCategory', 'applications.job', 'applications.alumni.alumniProfile']),
         ]);
     }
 

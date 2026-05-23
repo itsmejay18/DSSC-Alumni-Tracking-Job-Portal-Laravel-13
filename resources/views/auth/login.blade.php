@@ -52,7 +52,7 @@
                         <input type="checkbox" name="remember" @checked(old('remember'))>
                         <span>Remember me</span>
                     </label>
-                    <span class="portal-auth-meta-copy">One secure login for every portal user.</span>
+                    <a class="portal-auth-meta-copy" href="{{ route('password.request') }}">Forgot password?</a>
                 </div>
 
                 <button class="kit-button primary portal-auth-submit" type="submit">Login</button>

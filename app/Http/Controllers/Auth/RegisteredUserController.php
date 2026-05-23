@@ -21,9 +21,7 @@ use Illuminate\Validation\Rule;
 
 class RegisteredUserController extends Controller
 {
-    public function __construct(protected NotificationService $notificationService)
-    {
-    }
+    public function __construct(protected NotificationService $notificationService) {}
 
     public function create()
     {
@@ -55,23 +53,25 @@ class RegisteredUserController extends Controller
             'province' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user = DB::transaction(function () use ($request) {
+        $role = $request->input('role');
+
+        $user = DB::transaction(function () use ($request, $role) {
             $user = User::query()->create([
-                'name' => $request->string('name'),
-                'email' => $request->string('email'),
-                'password' => Hash::make($request->string('password')),
-                'role' => $request->string('role'),
+                'name' => $request->string('name')->toString(),
+                'email' => $request->string('email')->toString(),
+                'password' => Hash::make($request->string('password')->toString()),
+                'role' => $role,
                 'is_active' => true,
-                'is_approved' => $request->role === 'alumni',
+                'is_approved' => $role === 'alumni',
             ]);
 
-            if ($request->role === 'alumni') {
+            if ($role === 'alumni') {
                 AlumniProfile::query()->create([
                     'user_id' => $user->id,
-                    'student_id' => $request->string('student_id'),
-                    'first_name' => $request->string('first_name'),
-                    'last_name' => $request->string('last_name'),
-                    'middle_name' => $request->string('middle_name'),
+                    'student_id' => $request->string('student_id')->toString(),
+                    'first_name' => $request->string('first_name')->toString(),
+                    'last_name' => $request->string('last_name')->toString(),
+                    'middle_name' => $request->string('middle_name')->toString(),
                     'course_id' => $request->integer('course_id'),
                     'year_graduated' => $request->integer('year_graduated') ?: null,
                     'employment_status' => $request->input('employment_status', 'unemployed'),
@@ -79,15 +79,15 @@ class RegisteredUserController extends Controller
                 ]);
             }
 
-            if ($request->role === 'employer') {
+            if ($role === 'employer') {
                 $employer = Employer::query()->create([
                     'user_id' => $user->id,
-                    'company_name' => $request->string('company_name'),
+                    'company_name' => $request->string('company_name')->toString(),
                     'industry_id' => $request->integer('industry_id'),
-                    'phone' => $request->string('phone'),
-                    'address_line1' => $request->string('address_line1'),
-                    'city' => $request->string('city'),
-                    'province' => $request->string('province'),
+                    'phone' => $request->string('phone')->toString(),
+                    'address_line1' => $request->string('address_line1')->toString(),
+                    'city' => $request->string('city')->toString(),
+                    'province' => $request->string('province')->toString(),
                     'country' => 'Philippines',
                 ]);
 

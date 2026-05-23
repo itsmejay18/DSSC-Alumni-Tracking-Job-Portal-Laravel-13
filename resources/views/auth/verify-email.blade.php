@@ -11,6 +11,7 @@
                     <span class="kit-kicker" style="color: var(--accent);">Email Verification</span>
                     <h2>Confirm your email address</h2>
                     <p class="kit-card-subtitle">Alumni accounts require email verification before accessing job applications.</p>
+                    <p class="kit-muted" style="margin: 10px 0 0;">Verification links are sent to {{ auth()->user()->email }}.</p>
                 </div>
             </div>
             <div class="kit-action-row">

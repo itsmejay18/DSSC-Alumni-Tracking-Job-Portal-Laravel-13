@@ -13,6 +13,8 @@ use App\Http\Controllers\Alumni\JobController as AlumniJobController;
 use App\Http\Controllers\Alumni\MatchController as AlumniMatchController;
 use App\Http\Controllers\Alumni\ProfileController as AlumniProfileController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Employer\ApplicationController as EmployerApplicationController;
 use App\Http\Controllers\Employer\DashboardController as EmployerDashboardController;
@@ -49,7 +51,7 @@ Route::get('/health', function () {
     try {
         DB::connection()->getPdo();
         $database = 'ok';
-    } catch (\Throwable $exception) {
+    } catch (Throwable $exception) {
         $database = 'error';
     }
 
@@ -72,6 +74,11 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store'])->middleware('throttle:10,1');
+
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->middleware('throttle:5,1')->name('password.email');
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])->middleware('throttle:5,1')->name('password.store');
 });
 
 Route::middleware('auth')->group(function (): void {
