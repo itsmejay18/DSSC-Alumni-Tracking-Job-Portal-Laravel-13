@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Employer;
 use App\Models\Industry;
 use App\Models\Job;
+use App\Models\JobApplication;
 use App\Models\JobCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,6 +39,49 @@ class AlumniApplicationTest extends TestCase
             'alumni_id' => $alumni->id,
             'status' => 'pending',
         ]);
+    }
+
+    public function test_employer_can_view_resume_for_their_job_application(): void
+    {
+        Storage::fake('public');
+
+        [$alumni, $job, $employerUser] = $this->seedScenario();
+
+        $this->actingAs($alumni)->post(route('alumni.jobs.apply', $job), [
+            'cover_letter' => str_repeat('Experienced and eager to contribute. ', 3),
+            'resume' => UploadedFile::fake()->create('resume.pdf', 120),
+        ]);
+
+        $application = JobApplication::query()->firstOrFail();
+
+        $response = $this->actingAs($employerUser)->get(route('employer.applications.resume', $application));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+    }
+
+    public function test_employer_cannot_view_resume_for_another_employers_application(): void
+    {
+        Storage::fake('public');
+
+        [$alumni, $job] = $this->seedScenario();
+        $otherEmployer = User::factory()->employer()->create();
+        Employer::query()->create([
+            'user_id' => $otherEmployer->id,
+            'company_name' => 'Other Tech Corp',
+            'is_verified' => true,
+        ]);
+
+        $this->actingAs($alumni)->post(route('alumni.jobs.apply', $job), [
+            'cover_letter' => str_repeat('Experienced and eager to contribute. ', 3),
+            'resume' => UploadedFile::fake()->create('resume.pdf', 120),
+        ]);
+
+        $application = JobApplication::query()->firstOrFail();
+
+        $this->actingAs($otherEmployer)
+            ->get(route('employer.applications.resume', $application))
+            ->assertForbidden();
     }
 
     protected function seedScenario(): array
@@ -75,6 +119,6 @@ class AlumniApplicationTest extends TestCase
             'application_deadline' => now()->addDays(20),
         ]);
 
-        return [$alumni, $job];
+        return [$alumni, $job, $employerUser];
     }
 }

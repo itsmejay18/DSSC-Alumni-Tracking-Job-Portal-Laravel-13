@@ -179,6 +179,7 @@ Route::middleware(['auth', 'employer', 'check.status'])->prefix('employer')->nam
     Route::post('/jobs/{job}/close', [EmployerJobController::class, 'close'])->name('jobs.close');
 
     Route::get('/applications', [EmployerApplicationController::class, 'index'])->name('applications.index');
+    Route::get('/applications/{application}/resume', [EmployerApplicationController::class, 'resume'])->name('applications.resume');
     Route::get('/applications/{application}', [EmployerApplicationController::class, 'show'])->name('applications.show');
     Route::put('/applications/{application}', [EmployerApplicationController::class, 'update'])->name('applications.update');
 

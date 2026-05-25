@@ -7,7 +7,7 @@
     <article class="kit-card pad-lg">
         <div class="kit-card-head"><div><h2>{{ $application->alumni?->name }}</h2><p class="kit-card-subtitle">{{ $application->job?->title }}</p></div></div>
         <p class="kit-muted">{{ $application->cover_letter }}</p>
-        <div class="kit-action-row"><a class="kit-button secondary" href="{{ asset('storage/'.$application->resume_path) }}" target="_blank">View Resume</a></div>
+        <div class="kit-action-row"><a class="kit-button secondary" href="{{ route('employer.applications.resume', $application) }}" target="_blank">View Resume</a></div>
     </article>
 
     <article class="kit-card pad-lg">

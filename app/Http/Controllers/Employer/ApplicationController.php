@@ -7,6 +7,8 @@ use App\Http\Requests\Employer\UpdateApplicationRequest;
 use App\Models\JobApplication;
 use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApplicationController extends Controller
 {
@@ -32,6 +34,23 @@ class ApplicationController extends Controller
         return view('employer.applications.show', [
             'application' => $application->load(['job', 'alumni.alumniProfile']),
         ]);
+    }
+
+    public function resume(JobApplication $application): StreamedResponse
+    {
+        abort_unless($application->job?->employer_id === auth()->user()->employerProfile?->id, 403);
+
+        abort_if(
+            blank($application->resume_path) || ! Storage::disk('public')->exists($application->resume_path),
+            404,
+            'Resume file not found.'
+        );
+
+        return Storage::disk('public')->response(
+            $application->resume_path,
+            basename($application->resume_path),
+            ['Cache-Control' => 'private, no-store']
+        );
     }
 
     public function update(UpdateApplicationRequest $request, JobApplication $application): RedirectResponse
