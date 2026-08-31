@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::query()->updateOrCreate(
+        $admin = User::withTrashed()->updateOrCreate(
             ['email' => 'admin@alumniportal.com'],
             [
                 'name' => 'Portal Administrator',
@@ -28,10 +28,14 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
+        if ($admin->trashed()) {
+            $admin->restore();
+        }
+
         $course = Course::query()->where('course_code', 'BSIT')->first() ?? Course::query()->first();
         $industry = Industry::query()->where('industry_code', 'IT')->first() ?? Industry::query()->first();
 
-        $alumni = User::query()->updateOrCreate(
+        $alumni = User::withTrashed()->updateOrCreate(
             ['email' => 'alumni@alumniportal.com'],
             [
                 'name' => 'Juan Dela Cruz',
@@ -45,8 +49,12 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
+        if ($alumni->trashed()) {
+            $alumni->restore();
+        }
+
         if ($course) {
-            AlumniProfile::query()->updateOrCreate(
+            $profile = AlumniProfile::withTrashed()->updateOrCreate(
                 ['user_id' => $alumni->id],
                 [
                     'student_id' => '2026-00001',
@@ -68,9 +76,13 @@ class AdminUserSeeder extends Seeder
                     'verification_date' => now(),
                 ]
             );
+
+            if ($profile->trashed()) {
+                $profile->restore();
+            }
         }
 
-        $employer = User::query()->updateOrCreate(
+        $employer = User::withTrashed()->updateOrCreate(
             ['email' => 'employer@alumniportal.com'],
             [
                 'name' => 'DSSC Hiring Team',
@@ -84,8 +96,12 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
+        if ($employer->trashed()) {
+            $employer->restore();
+        }
+
         if ($industry) {
-            Employer::query()->updateOrCreate(
+            $employerProfile = Employer::withTrashed()->updateOrCreate(
                 ['user_id' => $employer->id],
                 [
                     'company_name' => 'DSSC Career Partners Inc.',
@@ -105,6 +121,10 @@ class AdminUserSeeder extends Seeder
                     'verified_by' => $admin->id,
                 ]
             );
+
+            if ($employerProfile->trashed()) {
+                $employerProfile->restore();
+            }
         }
     }
 }
