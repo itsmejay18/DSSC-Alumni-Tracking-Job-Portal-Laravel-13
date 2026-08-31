@@ -45,10 +45,21 @@ php artisan schedule:work
 php artisan serve
 ```
 
-Default admin login:
+Default seeded logins (all use the password `password`):
 
-- Email: `admin@alumniportal.com`
-- Password: `password`
+- Admin: `admin@alumniportal.com`
+- Alumni: `alumni@alumniportal.com`
+- Employer: `employer@alumniportal.com`
+
+## Demo Data
+
+`php artisan migrate --seed` creates reference records and representative data for every portal module, including alumni, employers, jobs, applications, matches, employment history, notifications, reports, activity logs, and settings. The seeders use stable identifiers and can safely be run again with:
+
+```bash
+php artisan db:seed
+```
+
+Additional demo accounts follow the patterns `alumni1@example.com` through `alumni120@example.com` and `employer1@example.com` through `employer20@example.com`. They also use the password `password`.
 
 ## Key Routes
 
